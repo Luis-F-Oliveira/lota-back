@@ -2,10 +2,32 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\User;
+use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class Accounts extends Model
+class Accounts extends Authenticatable
 {
-    use HasFactory;
+    use HasApiTokens, HasFactory, Notifiable;
+
+    protected $fillable = [
+        'user_id',
+        'password',
+        'access',
+        'theme',
+        'first'
+    ];
+
+    protected $hidden = [
+        'password'
+    ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
