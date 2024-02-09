@@ -2,47 +2,62 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class CategoryController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $categories = Category::all();
+
+        if ($categories->isEmpty()) {
+            return response()->json([
+                'message' => 'Sem categorias cadastradas'
+            ], 404);
+        }
+
+        return response()->json([
+            'data' => $categories
+        ], 200);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        try {
+            return Category::create([
+                'name' => $request->input('name')
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'error' => $e
+            ], 422);
+        }
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Category $category)
+    public function show($id)
+    {
+        $category = Category::find($id);
+
+        if (!$category) {
+            return response()->json([
+                'message' => 'Categoria não encontrada'
+            ], 404);
+        }
+
+        return response()->json([
+            'data' => $category
+        ], 200);
+    }
+
+    public function update(Request $request, $id)
     {
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Category $category)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Category $category)
+    public function destroy($id)
     {
         //
     }

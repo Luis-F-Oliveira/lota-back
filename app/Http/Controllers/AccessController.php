@@ -2,48 +2,89 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
 use App\Models\Access;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class AccessController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    public function __construct()
+    {
+        $this->middleware('ability:moderator')
+             ->only('store', 'destroy', 'update');
+    }
+
     public function index()
     {
-        //
+        try {
+            $accesses = Access::all();
+     
+            if ($accesses->isEmpty()) {
+                return response()->json([
+                    'message' => 'Sem niveis de acessos cadastrados'
+                ], 404);
+            }
+
+            return response()->json([
+                'data' => $accesses
+            ], 200);
+
+        } catch (Exception $e) {
+            return response()->json([
+                'error' => $e
+            ]);
+        }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        if (Access::where('name', $request->input('name'))->first()) {
+            return response()->json([
+                'message' => 'Nivel de acesso já existente'
+            ], 409);
+        }
+
+        try {
+            return Access::create([
+                'name' => $request->input('name')
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'error' => $e
+            ], 500);
+        }
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Access $access)
+    public function show($id)
     {
-        //
+        try {
+            $access = Access::find($id);
+     
+            if (!$access) {
+                return response()->json([
+                    'message' => 'Nivel de acesso não encontrado'
+                ], 404);
+            }
+
+            return response()->json([
+                'data' => $access
+            ], 200);
+            
+        } catch (Exception $e) {
+            return response()->json([
+                'error' => $e
+            ]);
+        }
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Access $access)
+    public function update(Request $request, $id)
     {
-        //
+        
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Access $access)
+    public function destroy($id)
     {
-        //
+        
     }
 }

@@ -2,47 +2,54 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Department;
+use Exception;
+use App\Models\Role;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-class DepartmentController extends Controller
+class RoleController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $roles = Role::with('category')->get();
+
+        if ($roles->isEmpty()) {
+            return response()->json([
+                'message' => 'Sem cargos cadastrados'
+            ], 404);
+        }
+
+        return response()->json([
+            'data' => $roles
+        ], 200);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         //
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Department $department)
+    public function show($id)
+    {
+        $role = Role::with('category')->find($id);
+
+        if (!$role) {
+            return response()->json([
+                'message' => 'Cargo não encontrado'
+            ], 404);
+        }
+
+        return response()->json([
+            'data' => $role
+        ]);
+    }
+
+    public function update(Request $request, $id)
     {
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Department $department)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Department $department)
+    public function destroy($id)
     {
         //
     }
