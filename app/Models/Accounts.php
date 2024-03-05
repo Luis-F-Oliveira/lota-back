@@ -23,7 +23,9 @@ class Accounts extends Authenticatable
     ];
 
     protected $hidden = [
-        'password'
+        'password',
+        'created_at',
+        'updated_at'
     ];
 
     public function user()

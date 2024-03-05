@@ -53,7 +53,7 @@ class AuthController extends Controller
                 'password' => Hash::make(12345678),
                 'access' => $request->input('access'),
                 'theme' => false,
-                'first' => false
+                'first' => true
             ]);
         } catch (Exception $e) {
             return response()->json([
@@ -168,7 +168,6 @@ class AuthController extends Controller
             $cookie = cookie('jwt', $token, 60 * 24);
 
             return response()->json([
-                'token' => $token,
                 'user' => $userAccount
             ])->withCookie($cookie);
         } catch (Exception $e) {
